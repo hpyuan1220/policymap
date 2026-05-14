@@ -185,6 +185,80 @@
     vertical-align: middle;
     font-weight: 500;
   }
+  .ai-btn {
+    background: linear-gradient(135deg, #6b8df0 0%, #a78bfa 100%);
+    color: #0b0d10;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.1s, box-shadow 0.15s;
+  }
+  .ai-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 141, 240, 0.3);
+  }
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal h3 { margin: 0 0 8px; font-size: 18px; }
+  .modal .modal-sub { color: var(--text-muted); font-size: 13px; margin-bottom: 16px; }
+  .modal pre {
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: "Noto Sans TC", inherit;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 280px;
+    overflow-y: auto;
+    color: var(--text);
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .modal-actions button { flex: 1; min-width: 120px; }
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 20px;
+    float: right;
+    line-height: 1;
+    padding: 0;
+  }
   .grid-3 {
     display: grid;
     grid-template-columns: 1fr;
@@ -258,6 +332,7 @@
     <label class="field-label">原句（盡量逐字）</label>
     <textarea data-key="c1_quote" placeholder="把那句話原封不動寫下來，不要先美化"></textarea>
     <div class="example">「我家附近的便利商店每天發出去幾千個塑膠袋，海邊撿都撿不完，政府到底有沒有在管？」— 海邊社區里長，2026/04/12 地方公聽會。</div>
+    <button class="ai-btn" onclick="askAI(1)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 2 -->
@@ -281,6 +356,7 @@
       </div>
     </div>
     <div class="example">① 環境部資源循環署、地方環保局；② 海邊清潔志工張先生、漁民王船長、便利商店店員李小姐；③ 塑膠袋製造工會、荒野保護協會、環保記者陳○○。</div>
+    <button class="ai-btn" onclick="askAI(2)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 3 -->
@@ -296,6 +372,7 @@
     <input type="text" data-key="c3_x" placeholder="X：例如 個人便利">
     <input type="text" data-key="c3_y" placeholder="Y：例如 環境永續 / 公共安全" style="margin-top:8px;">
     <div class="example">每當『民眾外出消費』，社會就在『個人便利（順手拿一個袋子）』與『公共利益（海洋汙染與廢棄物處理成本）』之間產生衝突。</div>
+    <button class="ai-btn" onclick="askAI(3)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 4 -->
@@ -313,6 +390,7 @@
     <label class="field-label">這構成「公共關注」嗎？或只是被個案喧染？</label>
     <textarea data-key="c4_public" placeholder="從媒體聲量、民調、立法院質詢頻率、陳情件數來判斷"></textarea>
     <div class="example">數據：台灣每年使用 180 億個塑膠袋、回收率 &lt; 10%、海岸垃圾調查中塑膠袋佔比 18%。後果：垃圾處理成本年增 X 億、海洋生態破壞、影響觀光。公共關注：環團每年舉辦淨灘、媒體年均報導 200+ 篇 — 是真議題不是個案。</div>
+    <button class="ai-btn" onclick="askAI(4)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 5 -->
@@ -327,6 +405,7 @@
     <label class="field-label">具體因素分析</label>
     <textarea data-key="c5_factors" placeholder="把你選的類型展開：是誰的什麼行為、在什麼制度下、造成什麼結果"></textarea>
     <div class="example">類型：典型市場失靈 — 負外部性。具體因素：使用者享受便利（私利），但海洋汙染、垃圾處理成本由全社會承擔（公益）；商家提供免費塑膠袋作為競爭手段；現行法規未將外部成本內化到價格。</div>
+    <button class="ai-btn" onclick="askAI(5)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 6 -->
@@ -344,6 +423,7 @@
     <label class="field-label">假設關係（如果做 A，預期 B 會發生）</label>
     <textarea data-key="c6_hypothesis" placeholder="例：『若對使用者收費 X 元，使用量將下降 Y%』 — 寫成可驗證的句子"></textarea>
     <div class="example">變項：使用者價格敏感度、商家配合度、替代方案（環保袋）取得成本。工具：① 對使用者收費 ② 強制商家不主動提供 ③ 加強宣導 ④ 補助環保袋。假設：若每袋收 1 元，使用量下降 60%（參考愛爾蘭 PlasTax 經驗）。</div>
+    <button class="ai-btn" onclick="askAI(6)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 7 -->
@@ -361,6 +441,7 @@
     <label class="field-label">差距 = 我的盲點</label>
     <textarea data-key="c7_blind" placeholder="一句話：「我原本以為 X，但實際是 Y。」"></textarea>
     <div class="example">猜：禁用塑膠袋最有效。對照：愛爾蘭只「收費」就降 90%；全面禁用反而推升黑市與替代品（紙袋）的更高碳足跡。盲點：低估了「價格訊號」的效率，高估了「禁令」的乾淨。</div>
+    <button class="ai-btn" onclick="askAI(7)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 8 -->
@@ -378,6 +459,7 @@
     <label class="field-label">3 題核心題目（直接打到假設核心）</label>
     <textarea data-key="c8_q" placeholder="1) ___&#10;2) ___&#10;3) ___"></textarea>
     <div class="example">Who：① 環境部資源循環署科長 ② 便利商店店長 ③ 環團專員。When：本週五前完成。題目：1) 過去十年塑膠袋政策最大的執行困難是？2) 收費後您觀察到消費者行為變化？3) 您認為下一步該往哪走？</div>
+    <button class="ai-btn" onclick="askAI(8)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <!-- CARD 9 -->
@@ -401,6 +483,7 @@
     <label class="field-label">📋 最終判斷</label>
     <textarea data-key="c9_verdict" placeholder="✅ 真政策問題 / ⚠️ 待研究 / ❌ 假議題（個案被喧染） — 並寫下下一步"></textarea>
     <div class="example">① 是，年成本數十億元 + 海洋生態 + 國際形象。② 部分 — 經濟誘因工具預算可行，回收基礎建設待補。③ 可改善（國際已有成功案例）。議程：已在政府議程，2018 起分階段推動；機會窗口：循環經濟為國發會主軸。最終：✅ 真政策問題。下一步：完成 3 場訪談 + 對標愛爾蘭，2 週內提方案規劃草案。</div>
+    <button class="ai-btn" onclick="askAI(9)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
   </section>
 
   <div class="nav">
@@ -422,9 +505,24 @@
 
 </div>
 
+<div class="modal-bg" id="ai-modal" onclick="if(event.target===this)closeAI()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAI()">×</button>
+    <h3>✨ 用 AI 幫我寫這張卡</h3>
+    <div class="modal-sub">下面是已經幫你組好的提示詞（包含框架說明 + 你目前填的內容 + 這張卡要 AI 做什麼）。選一個 AI 平台開啟，或複製到別處貼上。</div>
+    <pre id="ai-prompt-content"></pre>
+    <div class="modal-actions">
+      <button class="primary" onclick="openClaude()">開 Claude</button>
+      <button onclick="openChatGPT()">開 ChatGPT</button>
+      <button onclick="openPerplexity()">開 Perplexity（找證據）</button>
+      <button id="copy-btn" onclick="copyPrompt()">複製提示詞</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   ◆ PolicyMap · 公共政策問題界定訪談問卷 · 改編自 PainMap Worksheet 結構 + Weimer & Vining《Policy Analysis: Concepts and Practice》Ch.14–15<br>
-  本檔案完全在你的瀏覽器運作；填寫內容自動存到 localStorage，不會上傳任何伺服器。
+  本檔案完全在你的瀏覽器運作；填寫內容自動存到 localStorage，不會上傳任何伺服器。AI 提示詞會在你按下「開 Claude/ChatGPT/Perplexity」時送到該平台。
 </footer>
 
 <script>
@@ -512,6 +610,92 @@
     a.href = url; a.download = 'policymap-worksheet.txt'; a.click();
     URL.revokeObjectURL(url);
   }
+
+  // ===== AI Helper =====
+  const aiPrompts = {
+    1: '請幫我把這句原話分析得更清楚：\n1. 背後可能反映的「公共價值衝突」是什麼？（例：個人自由 vs 公共安全、效率 vs 公平）\n2. 這位陳情人最在意的是什麼？（用一句話總結）\n3. 提供 1 個更尖銳精準的版本，能凸顯政策問題的核心。',
+    2: '請幫我列出針對這個議題的完整利害關係人地圖：\n1. 政府部門：哪個中央部會、地方局處、跨部會單位可能負責？\n2. 直接受影響者：哪些人群被影響？影響方式是什麼？\n3. 利益相關方：哪些 NGO、企業、學術機構、媒體、議員可能有立場？\n4. 我目前可能漏掉的關鍵利害關係人是誰？\n（請以台灣脈絡為主，並建議具體可聯絡的單位類型）',
+    3: '請幫我把這個議題壓縮成 3 個版本的「每當 X，社會就在 Y 與 Z 之間衝突」句型，分別呈現不同視角：\n1. 價值衝突視角（例：自由 vs 安全）\n2. 利益衝突視角（例：誰得利 vs 誰承擔成本）\n3. 制度衝突視角（例：現行法規 vs 新興需求）\n哪個版本最能呈現這個政策問題的核心？',
+    4: '請幫我評估這個政策問題的症狀（Weimer & Vining 步驟一 Assessing）：\n1. 在台灣的具體規模、頻率、趨勢是什麼？（請給出可查證的數據估計）\n2. 建議去哪些資料來源查證（政府統計、學術研究、智庫報告、媒體資料庫）\n3. 不處理會有什麼後果？（經濟、社會、環境、健康各面向）\n4. 這構成「公共關注」嗎？從媒體聲量、立法院質詢、民調等判斷',
+    5: '請幫我做問題架構（Weimer & Vining 步驟二 Framing）：\n1. 這個問題主要屬於哪一類失靈？（市場失靈 / 政府失靈 / 分配不公 / 價值衝突）\n2. 具體機制是什麼？（例：負外部性的成本由誰承擔？資訊不對稱在哪一環？）\n3. 我可能誤判的失靈類型是什麼？（避免見樹不見林）',
+    6: '請幫我做問題模型化（Weimer & Vining 步驟三 Modeling）：\n1. 列出可能的政策工具（依分類：利用市場 / 法規管制 / 直接提供 / 保險緩衝 / 資訊宣導 / 自願協議）\n2. 針對每個工具，國際上是否有實際案例？效果如何？\n3. 把假設關係寫成「若做 A，預期 B 將發生，因為 C」的可驗證句子（至少 3 條）\n4. 哪個工具的台灣可行性最高？為什麼？',
+    7: '我目前的直覺猜測寫在上面。請幫我做嚴謹的證據對照：\n1. 國際上有哪些國家或城市做過類似政策？實際效果（量化）如何？\n2. 是否有反面案例（看似有效但實際失敗）？失敗原因是什麼？\n3. 學術文獻有沒有相關的後設分析或系統性回顧？\n4. 我的猜測中可能存在的盲點 / 確認偏誤是什麼？\n（請特別強調與我直覺不一致的證據）',
+    8: '請幫我設計利害關係人訪談題目：\n1. 針對 Card 2 的 3 組受訪者，每人設計 3 題核心題（共 9 題）\n2. 題目要能直接驗證 Card 6 的政策工具假設\n3. 題目避免引導性、避免封閉式的「是非」問題\n4. 排除順序：先暖身、再核心、最後開放性問題\n5. 列出每題希望聽到的「答案類型」，方便我事後判讀',
+    9: '請幫我做最終政策問題判斷：\n1. 用 Wildavsky 三條件評估：(a) 社會角度值得解決？(b) 現有資源足夠？(c) 這是可解決的問題？\n2. 用 Birkland 議程設定理論評估：目前在哪個議程位置？（系統議程 / 公共議程 / 政府議程 / 決策議程）\n3. 議程改變的機會窗口何時可能出現？（焦點事件 / 政黨輪替 / 民意翻轉 / 國際壓力）\n4. 結論：這是「真政策問題」、「待研究」、還是「假議題」？\n5. 建議下一步具體行動（72 小時內可執行的 3 件事）'
+  };
+
+  function buildPrompt(cardNum) {
+    const card = document.querySelector(`[data-card="${cardNum}"]`);
+    const title = card.querySelector('h2').textContent.replace(/\s+/g, ' ').trim();
+    const labels = card.querySelectorAll('.field-label');
+    const inputs = card.querySelectorAll('[data-key]');
+    let userContent = '';
+    labels.forEach((l, j) => {
+      const v = inputs[j] ? inputs[j].value.trim() : '';
+      if (v) userContent += `【${l.textContent.trim()}】\n${v}\n\n`;
+    });
+    if (!userContent) userContent = '（這張卡我還沒填，請先依框架幫我發想方向）\n';
+    return `我正在做一份公共政策問題界定的訪談問卷，依 Weimer & Vining《Policy Analysis: Concepts and Practice》Ch.14-15 的框架。
+
+目前卡片：CARD ${cardNum} · ${title}
+
+我目前填寫的內容：
+${userContent}
+請幫我做這件事：
+${aiPrompts[cardNum]}
+
+回應要求：
+- 請用繁體中文
+- 列點清楚、具體可執行
+- 引用台灣脈絡的例子優先，但也歡迎國際案例對照
+- 直接給建議，不需要重複我已經寫的內容
+- 請誠實標示哪些是推論、哪些有實證支持`;
+  }
+
+  function askAI(cardNum) {
+    const prompt = buildPrompt(cardNum);
+    document.getElementById('ai-prompt-content').textContent = prompt;
+    document.getElementById('ai-modal').classList.add('show');
+    document.getElementById('ai-modal').dataset.prompt = prompt;
+  }
+
+  function closeAI() {
+    document.getElementById('ai-modal').classList.remove('show');
+  }
+
+  function openClaude() {
+    const p = document.getElementById('ai-modal').dataset.prompt;
+    window.open(`https://claude.ai/new?q=${encodeURIComponent(p)}`, '_blank');
+  }
+  function openChatGPT() {
+    const p = document.getElementById('ai-modal').dataset.prompt;
+    window.open(`https://chatgpt.com/?q=${encodeURIComponent(p)}`, '_blank');
+  }
+  function openPerplexity() {
+    const p = document.getElementById('ai-modal').dataset.prompt;
+    window.open(`https://www.perplexity.ai/?q=${encodeURIComponent(p)}`, '_blank');
+  }
+  async function copyPrompt() {
+    const p = document.getElementById('ai-modal').dataset.prompt;
+    try {
+      await navigator.clipboard.writeText(p);
+      const btn = document.getElementById('copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = '✓ 已複製';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    } catch(e) { alert('複製失敗，請手動選取上方文字複製。'); }
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('ai-modal').classList.contains('show')) {
+      if (e.key === 'Escape') closeAI();
+      return;
+    }
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
 
   // Init
   load();
