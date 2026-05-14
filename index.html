@@ -259,6 +259,63 @@
     line-height: 1;
     padding: 0;
   }
+  .ai-suggestion {
+    display: none;
+    margin-top: 16px;
+    background: linear-gradient(135deg, #1a1f2e 0%, #1e1830 100%);
+    border: 1px solid #4a5bb8;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .ai-suggestion.show { display: block; }
+  .ai-suggestion .ai-label {
+    color: #a78bfa;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .ai-suggestion .ai-response {
+    white-space: pre-wrap;
+    font-family: "Noto Sans TC", inherit;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 0 0 12px;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .ai-suggestion .ai-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 8px 4px;
+  }
+  .ai-suggestion .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #4a5bb8;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-suggestion .ai-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .ai-suggestion .ai-actions button { flex: 1; min-width: 110px; font-size: 13px; padding: 8px 10px; }
+  .ai-fallback {
+    color: var(--warn);
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
   .grid-3 {
     display: grid;
     grid-template-columns: 1fr;
@@ -333,6 +390,7 @@
     <textarea data-key="c1_quote" placeholder="把那句話原封不動寫下來，不要先美化"></textarea>
     <div class="example">「我家附近的便利商店每天發出去幾千個塑膠袋，海邊撿都撿不完，政府到底有沒有在管？」— 海邊社區里長，2026/04/12 地方公聽會。</div>
     <button class="ai-btn" onclick="askAI(1)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="1"></div>
   </section>
 
   <!-- CARD 2 -->
@@ -357,6 +415,7 @@
     </div>
     <div class="example">① 環境部資源循環署、地方環保局；② 海邊清潔志工張先生、漁民王船長、便利商店店員李小姐；③ 塑膠袋製造工會、荒野保護協會、環保記者陳○○。</div>
     <button class="ai-btn" onclick="askAI(2)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="2"></div>
   </section>
 
   <!-- CARD 3 -->
@@ -373,6 +432,7 @@
     <input type="text" data-key="c3_y" placeholder="Y：例如 環境永續 / 公共安全" style="margin-top:8px;">
     <div class="example">每當『民眾外出消費』，社會就在『個人便利（順手拿一個袋子）』與『公共利益（海洋汙染與廢棄物處理成本）』之間產生衝突。</div>
     <button class="ai-btn" onclick="askAI(3)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="3"></div>
   </section>
 
   <!-- CARD 4 -->
@@ -391,6 +451,7 @@
     <textarea data-key="c4_public" placeholder="從媒體聲量、民調、立法院質詢頻率、陳情件數來判斷"></textarea>
     <div class="example">數據：台灣每年使用 180 億個塑膠袋、回收率 &lt; 10%、海岸垃圾調查中塑膠袋佔比 18%。後果：垃圾處理成本年增 X 億、海洋生態破壞、影響觀光。公共關注：環團每年舉辦淨灘、媒體年均報導 200+ 篇 — 是真議題不是個案。</div>
     <button class="ai-btn" onclick="askAI(4)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="4"></div>
   </section>
 
   <!-- CARD 5 -->
@@ -406,6 +467,7 @@
     <textarea data-key="c5_factors" placeholder="把你選的類型展開：是誰的什麼行為、在什麼制度下、造成什麼結果"></textarea>
     <div class="example">類型：典型市場失靈 — 負外部性。具體因素：使用者享受便利（私利），但海洋汙染、垃圾處理成本由全社會承擔（公益）；商家提供免費塑膠袋作為競爭手段；現行法規未將外部成本內化到價格。</div>
     <button class="ai-btn" onclick="askAI(5)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="5"></div>
   </section>
 
   <!-- CARD 6 -->
@@ -424,6 +486,7 @@
     <textarea data-key="c6_hypothesis" placeholder="例：『若對使用者收費 X 元，使用量將下降 Y%』 — 寫成可驗證的句子"></textarea>
     <div class="example">變項：使用者價格敏感度、商家配合度、替代方案（環保袋）取得成本。工具：① 對使用者收費 ② 強制商家不主動提供 ③ 加強宣導 ④ 補助環保袋。假設：若每袋收 1 元，使用量下降 60%（參考愛爾蘭 PlasTax 經驗）。</div>
     <button class="ai-btn" onclick="askAI(6)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="6"></div>
   </section>
 
   <!-- CARD 7 -->
@@ -442,6 +505,7 @@
     <textarea data-key="c7_blind" placeholder="一句話：「我原本以為 X，但實際是 Y。」"></textarea>
     <div class="example">猜：禁用塑膠袋最有效。對照：愛爾蘭只「收費」就降 90%；全面禁用反而推升黑市與替代品（紙袋）的更高碳足跡。盲點：低估了「價格訊號」的效率，高估了「禁令」的乾淨。</div>
     <button class="ai-btn" onclick="askAI(7)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="7"></div>
   </section>
 
   <!-- CARD 8 -->
@@ -460,6 +524,7 @@
     <textarea data-key="c8_q" placeholder="1) ___&#10;2) ___&#10;3) ___"></textarea>
     <div class="example">Who：① 環境部資源循環署科長 ② 便利商店店長 ③ 環團專員。When：本週五前完成。題目：1) 過去十年塑膠袋政策最大的執行困難是？2) 收費後您觀察到消費者行為變化？3) 您認為下一步該往哪走？</div>
     <button class="ai-btn" onclick="askAI(8)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="8"></div>
   </section>
 
   <!-- CARD 9 -->
@@ -484,6 +549,7 @@
     <textarea data-key="c9_verdict" placeholder="✅ 真政策問題 / ⚠️ 待研究 / ❌ 假議題（個案被喧染） — 並寫下下一步"></textarea>
     <div class="example">① 是，年成本數十億元 + 海洋生態 + 國際形象。② 部分 — 經濟誘因工具預算可行，回收基礎建設待補。③ 可改善（國際已有成功案例）。議程：已在政府議程，2018 起分階段推動；機會窗口：循環經濟為國發會主軸。最終：✅ 真政策問題。下一步：完成 3 場訪談 + 對標愛爾蘭，2 週內提方案規劃草案。</div>
     <button class="ai-btn" onclick="askAI(9)" type="button">✨ 用 AI 幫我寫這張卡（Claude / ChatGPT / Perplexity）</button>
+    <div class="ai-suggestion" data-card="9"></div>
   </section>
 
   <div class="nav">
@@ -652,11 +718,100 @@ ${aiPrompts[cardNum]}
 - 請誠實標示哪些是推論、哪些有實證支持`;
   }
 
-  function askAI(cardNum) {
+  // Map each card to its primary target field (where AI suggestion gets inserted)
+  const cardTargets = {
+    1: 'c1_quote', 2: 'c2_gov', 3: 'c3_when', 4: 'c4_data',
+    5: 'c5_type', 6: 'c6_tools', 7: 'c7_ai', 8: 'c8_q', 9: 'c9_verdict'
+  };
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function getBox(cardNum) {
+    return document.querySelector(`.ai-suggestion[data-card="${cardNum}"]`);
+  }
+
+  async function askAI(cardNum) {
+    const box = getBox(cardNum);
+    const prompt = buildPrompt(cardNum);
+    box.classList.add('show');
+    box.innerHTML = `
+      <div class="ai-label">✨ AI 思考中…</div>
+      <div class="ai-loading"><div class="spinner"></div>正在依 Weimer & Vining 框架幫你分析，約 10–30 秒…</div>`;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    try {
+      const res = await fetch('https://text.pollinations.ai/openai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'openai',
+          messages: [
+            { role: 'system', content: '你是一位公共政策分析的助教，熟悉 Weimer & Vining《Policy Analysis: Concepts and Practice》與 Birkland 議程設定理論。請用繁體中文、簡潔列點回答，優先以台灣脈絡舉例，並誠實標示哪些是推論、哪些有實證支持。回答長度約 300–500 字。' },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7
+        })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const text = (data.choices?.[0]?.message?.content || '').trim();
+      if (!text) throw new Error('Empty response');
+
+      box.dataset.response = text;
+      box.innerHTML = `
+        <div class="ai-label">✨ AI 建議（CARD ${cardNum}）</div>
+        <div class="ai-response">${escapeHtml(text)}</div>
+        <div class="ai-actions">
+          <button class="primary" onclick="acceptAI(${cardNum})">📋 採用為我的答案</button>
+          <button onclick="askAI(${cardNum})">🔄 再生成一次</button>
+          <button onclick="openExternal(${cardNum})">🌐 改用外部 AI</button>
+          <button onclick="closeBox(${cardNum})">✗ 關閉</button>
+        </div>`;
+    } catch (e) {
+      box.innerHTML = `
+        <div class="ai-label">✨ AI 服務暫時無法使用</div>
+        <div class="ai-fallback">內建 AI 暫時無回應（${e.message}）。改用外部 AI：</div>
+        <div class="ai-actions">
+          <button class="primary" onclick="openExternal(${cardNum})">🌐 開啟外部 AI 視窗</button>
+          <button onclick="askAI(${cardNum})">🔄 再試一次</button>
+          <button onclick="closeBox(${cardNum})">✗ 關閉</button>
+        </div>`;
+    }
+  }
+
+  function acceptAI(cardNum) {
+    const box = getBox(cardNum);
+    const text = box.dataset.response || '';
+    if (!text) return;
+    const card = document.querySelector(`.card[data-card="${cardNum}"]`);
+    const targetKey = cardTargets[cardNum];
+    const target = card.querySelector(`[data-key="${targetKey}"]`);
+    if (target) {
+      const existing = target.value.trim();
+      target.value = existing
+        ? existing + '\n\n--- AI 建議 ---\n' + text
+        : text;
+      target.dispatchEvent(new Event('input'));
+      target.focus();
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    closeBox(cardNum);
+  }
+
+  function closeBox(cardNum) {
+    const box = getBox(cardNum);
+    box.classList.remove('show');
+    box.innerHTML = '';
+  }
+
+  function openExternal(cardNum) {
     const prompt = buildPrompt(cardNum);
     document.getElementById('ai-prompt-content').textContent = prompt;
     document.getElementById('ai-modal').classList.add('show');
     document.getElementById('ai-modal').dataset.prompt = prompt;
+    document.getElementById('ai-modal').dataset.cardNum = cardNum;
   }
 
   function closeAI() {
