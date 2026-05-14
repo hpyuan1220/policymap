@@ -574,14 +574,23 @@
 <div class="modal-bg" id="ai-modal" onclick="if(event.target===this)closeAI()">
   <div class="modal">
     <button class="modal-close" onclick="closeAI()">×</button>
-    <h3>✨ 用 AI 幫我寫這張卡</h3>
-    <div class="modal-sub">下面是已經幫你組好的提示詞（包含框架說明 + 你目前填的內容 + 這張卡要 AI 做什麼）。選一個 AI 平台開啟，或複製到別處貼上。</div>
+    <h3>✨ 用外部 AI 幫我寫這張卡</h3>
+    <div class="modal-sub"><strong>步驟 1</strong>：點下方任一 AI 平台，會自動帶入提示詞。</div>
     <pre id="ai-prompt-content"></pre>
     <div class="modal-actions">
       <button class="primary" onclick="openClaude()">開 Claude</button>
       <button onclick="openChatGPT()">開 ChatGPT</button>
       <button onclick="openPerplexity()">開 Perplexity（找證據）</button>
       <button id="copy-btn" onclick="copyPrompt()">複製提示詞</button>
+    </div>
+
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+      <div class="modal-sub" style="margin-bottom:8px;"><strong>步驟 2</strong>：從 AI 那邊複製好答案後，貼回下方欄位，再按「採用」自動填進卡片。</div>
+      <textarea id="paste-back-content" placeholder="把 AI 的回答整段複製貼到這裡…" style="min-height:140px;"></textarea>
+      <div class="modal-actions">
+        <button class="primary" onclick="pasteBackToCard()">📋 採用為我的答案</button>
+        <button onclick="document.getElementById('paste-back-content').value=''">清空</button>
+      </div>
     </div>
   </div>
 </div>
@@ -830,6 +839,31 @@ ${aiPrompts[cardNum]}
     const p = document.getElementById('ai-modal').dataset.prompt;
     window.open(`https://www.perplexity.ai/?q=${encodeURIComponent(p)}`, '_blank');
   }
+  function pasteBackToCard() {
+    const modal = document.getElementById('ai-modal');
+    const cardNum = parseInt(modal.dataset.cardNum, 10);
+    const text = document.getElementById('paste-back-content').value.trim();
+    if (!text) { alert('請先把 AI 的答案貼到上方欄位。'); return; }
+    if (!cardNum) { alert('找不到目標卡片。'); return; }
+
+    const card = document.querySelector(`.card[data-card="${cardNum}"]`);
+    const targetKey = cardTargets[cardNum];
+    const target = card.querySelector(`[data-key="${targetKey}"]`);
+    if (target) {
+      const existing = target.value.trim();
+      target.value = existing
+        ? existing + '\n\n--- AI 建議（外部）---\n' + text
+        : text;
+      target.dispatchEvent(new Event('input'));
+    }
+    document.getElementById('paste-back-content').value = '';
+    closeAI();
+    if (target) {
+      target.focus();
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
   async function copyPrompt() {
     const p = document.getElementById('ai-modal').dataset.prompt;
     try {
