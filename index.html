@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PolicyMap Worksheet — 把一句公共議題聽進去，再判斷它是不是真的政策問題</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #0b0d10;
+    --bg-card: #14171c;
+    --bg-card-2: #1a1e25;
+    --border: #2a2f38;
+    --text: #e8eaed;
+    --text-muted: #9aa3b0;
+    --accent: #8ab4f8;
+    --accent-2: #f9b572;
+    --good: #9ad29a;
+    --warn: #f5b05a;
+    --bad:  #e07b7b;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans TC", system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+  header {
+    padding: 32px 24px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  header .sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 16px 0 24px;
+  }
+  button {
+    background: var(--bg-card-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  button:hover { background: #232831; border-color: #3a4150; }
+  button.primary {
+    background: var(--accent);
+    color: #0b0d10;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  button.primary:hover { background: #a3c5fb; border-color: #a3c5fb; }
+  .progress {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .dot {
+    width: 24px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .dot.done { background: var(--good); }
+  .dot.active { background: var(--accent); }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .card.active { display: block; }
+  .card-num {
+    display: inline-block;
+    background: var(--bg-card-2);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .card h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .card .why {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 16px 0 6px;
+    letter-spacing: 0.02em;
+  }
+  textarea, input[type="text"] {
+    width: 100%;
+    background: var(--bg-card-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: vertical;
+  }
+  textarea { min-height: 90px; }
+  textarea:focus, input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #1d2229;
+  }
+  .example {
+    background: #131a14;
+    border: 1px dashed #2f4332;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #b6cdb6;
+  }
+  .example::before {
+    content: "範例（塑膠購物袋政策）";
+    display: block;
+    font-size: 11px;
+    color: var(--good);
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    gap: 12px;
+  }
+  .framework-tag {
+    display: inline-block;
+    background: #1a1e25;
+    color: var(--accent-2);
+    border: 1px solid #3a3530;
+    border-radius: 4px;
+    padding: 1px 8px;
+    font-size: 11px;
+    margin-left: 8px;
+    vertical-align: middle;
+    font-weight: 500;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  @media (min-width: 640px) {
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  details {
+    margin-top: 12px;
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  details summary {
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  details[open] summary { color: var(--accent); margin-bottom: 8px; }
+  .ref {
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .ref strong { color: var(--text); }
+  footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+  @media print {
+    .toolbar, .nav, .progress, footer, button { display: none !important; }
+    .card { display: block !important; page-break-inside: avoid; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>PolicyMap · 公共政策問題界定訪談問卷</h1>
+  <div class="sub">9 張卡，陪你從「我覺得社會有問題」走到「這是不是一個值得政府處理的政策問題」。<br>
+    依 Weimer & Vining《Policy Analysis》問題界定三步驟（評估／架構／模型化）+ Birkland 議程設定改編。</div>
+</header>
+
+<div class="container">
+
+  <div class="toolbar">
+    <button onclick="toggleExamples()" id="exBtn">顯示範例</button>
+    <button onclick="exportText()">匯出純文字</button>
+    <button onclick="window.print()">列印 / PDF</button>
+    <button onclick="resetAll()">清空全部</button>
+  </div>
+
+  <div class="progress" id="progress"></div>
+
+  <!-- CARD 1 -->
+  <section class="card active" data-card="1">
+    <span class="card-num">CARD 1 · 議題原句</span>
+    <h2>政策議題原句 <span class="framework-tag">問題的背景與參與者</span></h2>
+    <p class="why">鎖定原始訊號 — 不是你的詮釋，是民眾／媒體／陳情人說過的話。先寫他們的句子，不要先翻譯成政策語言。</p>
+
+    <label class="field-label">這句話是誰、在哪裡、什麼時候說的？</label>
+    <input type="text" data-key="c1_who" placeholder="例：社區里長、A 報投書、某 PTT 貼文、市議員質詢…">
+
+    <label class="field-label">原句（盡量逐字）</label>
+    <textarea data-key="c1_quote" placeholder="把那句話原封不動寫下來，不要先美化"></textarea>
+    <div class="example">「我家附近的便利商店每天發出去幾千個塑膠袋，海邊撿都撿不完，政府到底有沒有在管？」— 海邊社區里長，2026/04/12 地方公聽會。</div>
+  </section>
+
+  <!-- CARD 2 -->
+  <section class="card" data-card="2">
+    <span class="card-num">CARD 2 · 利害關係人</span>
+    <h2>3 組有名字的利害關係人 <span class="framework-tag">Stakeholders</span></h2>
+    <p class="why">把抽象的「社會大眾」拆成可聯絡的真人／組織 — 政府、受影響者、利益相關方各 1 組。沒有名字就不算找到。</p>
+
+    <div class="grid-3">
+      <div>
+        <label class="field-label">① 政府部門 / 主管機關</label>
+        <textarea data-key="c2_gov" placeholder="哪個部會／局處／單位 + 承辦窗口"></textarea>
+      </div>
+      <div>
+        <label class="field-label">② 直接受影響者</label>
+        <textarea data-key="c2_affected" placeholder="誰被這個問題影響？姓名 / 職業 / 聯絡方式"></textarea>
+      </div>
+      <div>
+        <label class="field-label">③ 利益相關方 / 倡議者</label>
+        <textarea data-key="c2_interest" placeholder="企業、NGO、學者、媒體、議員…"></textarea>
+      </div>
+    </div>
+    <div class="example">① 環境部資源循環署、地方環保局；② 海邊清潔志工張先生、漁民王船長、便利商店店員李小姐；③ 塑膠袋製造工會、荒野保護協會、環保記者陳○○。</div>
+  </section>
+
+  <!-- CARD 3 -->
+  <section class="card" data-card="3">
+    <span class="card-num">CARD 3 · 問題公式</span>
+    <h2>問題界定公式 <span class="framework-tag">Framing 句型</span></h2>
+    <p class="why">把模糊的議題壓縮成「每當 ____，社會就卡在 ____ 與 ____ 之間」的可驗證句型 — 暴露背後的價值或利益衝突。</p>
+
+    <label class="field-label">每當（情境）</label>
+    <input type="text" data-key="c3_when" placeholder="例：每當民眾上街購物消費">
+
+    <label class="field-label">就會在 X 和 Y 之間產生衝突</label>
+    <input type="text" data-key="c3_x" placeholder="X：例如 個人便利">
+    <input type="text" data-key="c3_y" placeholder="Y：例如 環境永續 / 公共安全" style="margin-top:8px;">
+    <div class="example">每當『民眾外出消費』，社會就在『個人便利（順手拿一個袋子）』與『公共利益（海洋汙染與廢棄物處理成本）』之間產生衝突。</div>
+  </section>
+
+  <!-- CARD 4 -->
+  <section class="card" data-card="4">
+    <span class="card-num">CARD 4 · 評估症狀</span>
+    <h2>評估症狀（Assessing） <span class="framework-tag">Weimer & Vining 步驟一</span></h2>
+    <p class="why">用「數據 + 後果」證明這不是個案被過度喧染。沒有數據先標 TODO — 但要寫下你打算去哪裡找。</p>
+
+    <label class="field-label">問題嚴重性的數據（規模、頻率、趨勢）</label>
+    <textarea data-key="c4_data" placeholder="例：年使用量 X 億個、回收率 Y%、海洋垃圾中佔比 Z%…（資料來源：環境部年報 / 主計總處 / OECD）"></textarea>
+
+    <label class="field-label">不處理的後果是什麼？</label>
+    <textarea data-key="c4_cost" placeholder="例：垃圾處理成本上升、海洋生態破壞、國際形象、健康外部性…"></textarea>
+
+    <label class="field-label">這構成「公共關注」嗎？或只是被個案喧染？</label>
+    <textarea data-key="c4_public" placeholder="從媒體聲量、民調、立法院質詢頻率、陳情件數來判斷"></textarea>
+    <div class="example">數據：台灣每年使用 180 億個塑膠袋、回收率 &lt; 10%、海岸垃圾調查中塑膠袋佔比 18%。後果：垃圾處理成本年增 X 億、海洋生態破壞、影響觀光。公共關注：環團每年舉辦淨灘、媒體年均報導 200+ 篇 — 是真議題不是個案。</div>
+  </section>
+
+  <!-- CARD 5 -->
+  <section class="card" data-card="5">
+    <span class="card-num">CARD 5 · 架構問題</span>
+    <h2>架構問題（Framing） <span class="framework-tag">Weimer & Vining 步驟二</span></h2>
+    <p class="why">找出「為什麼會發生」的結構性原因。對照四種常見的失靈類型 — 沒有歸類就無法選對工具。</p>
+
+    <label class="field-label">這個問題主要屬於哪一類？（可複選）</label>
+    <textarea data-key="c5_type" placeholder="□ 市場失靈（外部性、公共財、資訊不對稱、自然獨佔）&#10;□ 政府失靈（管制過當、執行不力、官僚僵化）&#10;□ 分配不公（弱勢承擔成本、機會不平等）&#10;□ 價值衝突（自由 vs 安全、效率 vs 公平、世代正義）"></textarea>
+
+    <label class="field-label">具體因素分析</label>
+    <textarea data-key="c5_factors" placeholder="把你選的類型展開：是誰的什麼行為、在什麼制度下、造成什麼結果"></textarea>
+    <div class="example">類型：典型市場失靈 — 負外部性。具體因素：使用者享受便利（私利），但海洋汙染、垃圾處理成本由全社會承擔（公益）；商家提供免費塑膠袋作為競爭手段；現行法規未將外部成本內化到價格。</div>
+  </section>
+
+  <!-- CARD 6 -->
+  <section class="card" data-card="6">
+    <span class="card-num">CARD 6 · 模型化</span>
+    <h2>模型化問題（Modeling） <span class="framework-tag">Weimer & Vining 步驟三</span></h2>
+    <p class="why">把「症狀 → 原因 → 政策工具」連成一條因果鏈。每個工具背後都是一個假設 — 寫出假設才能驗證。</p>
+
+    <label class="field-label">關鍵變項（哪些因素變了，問題就會變？）</label>
+    <textarea data-key="c6_vars" placeholder="例：塑膠袋價格、商家提供方式、消費者習慣、回收率、替代方案普及度…"></textarea>
+
+    <label class="field-label">候選政策工具（對照課程清單）</label>
+    <textarea data-key="c6_tools" placeholder="□ 利用市場（價格、租稅、補助）&#10;□ 法規與管制（禁令、限額、標準）&#10;□ 非市場提供（政府直接提供）&#10;□ 保險與緩衝&#10;□ 資訊與宣導&#10;□ 自願性協議"></textarea>
+
+    <label class="field-label">假設關係（如果做 A，預期 B 會發生）</label>
+    <textarea data-key="c6_hypothesis" placeholder="例：『若對使用者收費 X 元，使用量將下降 Y%』 — 寫成可驗證的句子"></textarea>
+    <div class="example">變項：使用者價格敏感度、商家配合度、替代方案（環保袋）取得成本。工具：① 對使用者收費 ② 強制商家不主動提供 ③ 加強宣導 ④ 補助環保袋。假設：若每袋收 1 元，使用量下降 60%（參考愛爾蘭 PlasTax 經驗）。</div>
+  </section>
+
+  <!-- CARD 7 -->
+  <section class="card" data-card="7">
+    <span class="card-num">CARD 7 · 假設驗證</span>
+    <h2>自己先猜 vs 證據對照 <span class="framework-tag">盲點檢測</span></h2>
+    <p class="why">先寫下你的直覺答案，再用 AI／文獻／國際案例去對照 — 訓練你的判斷力，不是接受 AI 的答案。差距越大，學到越多。</p>
+
+    <label class="field-label">我的直覺：最有效的工具是？</label>
+    <textarea data-key="c7_guess" placeholder="憑你現在的理解寫下來，不要查資料"></textarea>
+
+    <label class="field-label">證據對照（國際案例 / 文獻 / 既有研究）</label>
+    <textarea data-key="c7_ai" placeholder="找到的證據：愛爾蘭 / 香港 / 歐盟做了什麼？效果如何？學者研究說？"></textarea>
+
+    <label class="field-label">差距 = 我的盲點</label>
+    <textarea data-key="c7_blind" placeholder="一句話：「我原本以為 X，但實際是 Y。」"></textarea>
+    <div class="example">猜：禁用塑膠袋最有效。對照：愛爾蘭只「收費」就降 90%；全面禁用反而推升黑市與替代品（紙袋）的更高碳足跡。盲點：低估了「價格訊號」的效率，高估了「禁令」的乾淨。</div>
+  </section>
+
+  <!-- CARD 8 -->
+  <section class="card" data-card="8">
+    <span class="card-num">CARD 8 · 訪談計畫</span>
+    <h2>利害關係人訪談計畫 <span class="framework-tag">6W2H1E 簡版</span></h2>
+    <p class="why">把書面假設變成 72 小時內可執行的真人對話。每位利害關係人問 3 題核心題 — 直接驗證 Card 6 的假設。</p>
+
+    <label class="field-label">Who：要訪誰？（從 Card 2 挑 3 位）</label>
+    <textarea data-key="c8_who" placeholder="姓名 / 角色 / 為什麼選他"></textarea>
+
+    <label class="field-label">When / Where / How：什麼時候、用什麼方式</label>
+    <input type="text" data-key="c8_when" placeholder="例：本週四前、面訪 + 電訪、各 30 分鐘">
+
+    <label class="field-label">3 題核心題目（直接打到假設核心）</label>
+    <textarea data-key="c8_q" placeholder="1) ___&#10;2) ___&#10;3) ___"></textarea>
+    <div class="example">Who：① 環境部資源循環署科長 ② 便利商店店長 ③ 環團專員。When：本週五前完成。題目：1) 過去十年塑膠袋政策最大的執行困難是？2) 收費後您觀察到消費者行為變化？3) 您認為下一步該往哪走？</div>
+  </section>
+
+  <!-- CARD 9 -->
+  <section class="card" data-card="9">
+    <span class="card-num">CARD 9 · 政策問題判斷</span>
+    <h2>政策問題身份證 <span class="framework-tag">Wildavsky 三問 + 議程潛力</span></h2>
+    <p class="why">最終判斷：這是不是一個值得政府處理的真政策問題？對照 Wildavsky 三條件 + Birkland 議程設定潛力。</p>
+
+    <label class="field-label">① 從社會角度，這值得解決嗎？</label>
+    <textarea data-key="c9_worth" placeholder="是 / 否 + 一句理由"></textarea>
+
+    <label class="field-label">② 現有資源（預算、人力、技術）足以解決嗎？</label>
+    <textarea data-key="c9_resource" placeholder="是 / 否 / 部分 + 缺什麼"></textarea>
+
+    <label class="field-label">③ 這是個可以解決的問題嗎？（vs 永恆的價值衝突）</label>
+    <textarea data-key="c9_solvable" placeholder="可改善 / 可緩解 / 結構性難題（仍要面對）"></textarea>
+
+    <label class="field-label">議程設定潛力（Birkland）</label>
+    <textarea data-key="c9_agenda" placeholder="□ 已在政府議程&#10;□ 在公共議程但政府未動&#10;□ 倡議團體在推&#10;□ 機會窗口：____（焦點事件 / 政黨輪替 / 民意翻轉）"></textarea>
+
+    <label class="field-label">📋 最終判斷</label>
+    <textarea data-key="c9_verdict" placeholder="✅ 真政策問題 / ⚠️ 待研究 / ❌ 假議題（個案被喧染） — 並寫下下一步"></textarea>
+    <div class="example">① 是，年成本數十億元 + 海洋生態 + 國際形象。② 部分 — 經濟誘因工具預算可行，回收基礎建設待補。③ 可改善（國際已有成功案例）。議程：已在政府議程，2018 起分階段推動；機會窗口：循環經濟為國發會主軸。最終：✅ 真政策問題。下一步：完成 3 場訪談 + 對標愛爾蘭，2 週內提方案規劃草案。</div>
+  </section>
+
+  <div class="nav">
+    <button onclick="prev()">← 上一張</button>
+    <span id="counter" style="align-self:center;color:var(--text-muted);font-size:13px;"></span>
+    <button class="primary" onclick="next()">下一張 →</button>
+  </div>
+
+  <details>
+    <summary>📚 對照課程框架（第十一週：問題界定、方案規劃與議程設定）</summary>
+    <div class="ref">
+      <strong>問題界定三步驟（Weimer & Vining, Ch.15）：</strong> 評估症狀（Assessing）→ 架構問題（Framing）→ 模型化問題（Modeling）。本問卷 Card 4–6 對應此三步驟。<br><br>
+      <strong>Wildavsky 三問：</strong>(1) 社會認為值得解決嗎？(2) 現有資源足夠嗎？(3) 這是可以解決的問題嗎？— 對應 Card 9。<br><br>
+      <strong>Iris Geva-May：</strong>問題界定是以公共價值與公共議題為基礎的「創新與互動過程」。要分辨：問題評估症狀 vs 實際事實 / 政策 vs 政策目標 / 政策變數。<br><br>
+      <strong>方案基本內容 6W2H1E：</strong>Why · What · Who · Whom · Where · When · How · How much · Effect — 訪談時用來檢核任何提案是否完整。<br><br>
+      <strong>議程設定（Birkland, Ch.5）：</strong>議題網絡（鬆散、多元、開放）vs 政策社群（緊密、共識、封閉）。Card 9 的「議程潛力」用來判斷你的問題目前在哪個網絡裡。
+    </div>
+  </details>
+
+</div>
+
+<footer>
+  ◆ PolicyMap · 公共政策問題界定訪談問卷 · 改編自 PainMap Worksheet 結構 + Weimer & Vining《Policy Analysis: Concepts and Practice》Ch.14–15<br>
+  本檔案完全在你的瀏覽器運作；填寫內容自動存到 localStorage，不會上傳任何伺服器。
+</footer>
+
+<script>
+  const cards = document.querySelectorAll('.card');
+  const total = cards.length;
+  let current = 0;
+  let showExamples = true;
+
+  // Build progress dots
+  const progress = document.getElementById('progress');
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.onclick = () => goTo(i);
+    progress.appendChild(d);
+  }
+
+  function render() {
+    cards.forEach((c, i) => c.classList.toggle('active', i === current));
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+      d.classList.toggle('done', isFilled(i) && i !== current);
+    });
+    document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function isFilled(i) {
+    const card = cards[i];
+    const fields = card.querySelectorAll('[data-key]');
+    return Array.from(fields).some(f => f.value && f.value.trim().length > 0);
+  }
+
+  function next() { if (current < total - 1) { current++; render(); } }
+  function prev() { if (current > 0) { current--; render(); } }
+  function goTo(i) { current = i; render(); }
+
+  // Persistence
+  const STORAGE_KEY = 'policymap.worksheet.v1';
+  function save() {
+    const data = {};
+    document.querySelectorAll('[data-key]').forEach(el => { data[el.dataset.key] = el.value; });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+  }
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      document.querySelectorAll('[data-key]').forEach(el => {
+        if (data[el.dataset.key] !== undefined) el.value = data[el.dataset.key];
+      });
+    } catch(e) {}
+  }
+  document.querySelectorAll('[data-key]').forEach(el => el.addEventListener('input', save));
+
+  function toggleExamples() {
+    showExamples = !showExamples;
+    document.querySelectorAll('.example').forEach(e => e.style.display = showExamples ? 'block' : 'none');
+    document.getElementById('exBtn').textContent = showExamples ? '隱藏範例' : '顯示範例';
+  }
+
+  function resetAll() {
+    if (!confirm('清空所有欄位？此動作無法復原。')) return;
+    document.querySelectorAll('[data-key]').forEach(el => el.value = '');
+    localStorage.removeItem(STORAGE_KEY);
+    current = 0; render();
+  }
+
+  function exportText() {
+    let out = '# 公共政策問題界定訪談問卷\n\n';
+    cards.forEach((card, i) => {
+      const title = card.querySelector('h2').textContent.replace(/\s+/g, ' ').trim();
+      out += `## CARD ${i + 1} · ${title}\n\n`;
+      const labels = card.querySelectorAll('.field-label');
+      const inputs = card.querySelectorAll('[data-key]');
+      labels.forEach((l, j) => {
+        const val = inputs[j] ? inputs[j].value.trim() : '';
+        out += `**${l.textContent.trim()}**\n${val || '(未填)'}\n\n`;
+      });
+    });
+    const blob = new Blob([out], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'policymap-worksheet.txt'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Init
+  load();
+  render();
+</script>
+
+</body>
+</html>
